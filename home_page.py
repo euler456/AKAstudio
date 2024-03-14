@@ -10,10 +10,10 @@ class HomePage(tk.Frame):
         label.pack(pady=10, padx=10)
         
         # Button to navigate to Color Grab page
-        color_grab_button = tk.Button(self, text="Go to Color Grab", command=lambda: controller.show_frame(ColorGearPage))
+        color_grab_button = tk.Button(self, text="Go to Color Grab", command=lambda: controller.show_frame(ColorGrabPage))
         color_grab_button.pack()
 
-        color_gear_button = tk.Button(self, text="Go to Color Gear", command=lambda: controller.show_frame(ColorGrabPage))
+        color_gear_button = tk.Button(self, text="Go to Color Gear", command=lambda: controller.show_frame(ColorGearPage))
         color_gear_button.pack()
 
         color_converter_button = tk.Button(self, text="Go to Color Converter", command=lambda: controller.show_frame(ColorConverterPage))

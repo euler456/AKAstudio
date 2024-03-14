@@ -10,7 +10,7 @@ class SampleApp(tk.Tk):
         
         # Set up the window
         self.title("Multi-page Tkinter GUI")
-        self.geometry("400x300")
+        self.geometry("800x600")
         
         # Create a container to hold the pages
         container = tk.Frame(self)
