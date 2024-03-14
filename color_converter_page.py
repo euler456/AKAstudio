@@ -7,5 +7,6 @@ class ColorConverterPage(tk.Frame):
         label.pack(pady=10, padx=10)
         
         # Button to navigate to Home page
-        home_button = tk.Button(self, text="Go to Home", command=lambda: controller.show_frame("HomePage"))
+        from home_page import HomePage
+        home_button = tk.Button(self, text="Go to Home", command=lambda: controller.show_frame(HomePage))
         home_button.pack()
