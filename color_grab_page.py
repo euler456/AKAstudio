@@ -1,22 +1,23 @@
-import tkinter as tk
+import customtkinter as tk
+from customtkinter import CTkFrame, CTkCanvas ,CTkLabel, CTkButton
+
 import cv2
 from PIL import Image, ImageTk
 
-class ColorGrabPage(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
+class ColorGrabPage(CTkFrame):
+    def __init__(self, parent, show_page1_callback):
+        super().__init__(parent)
 
         # Create a canvas to display the video feed
-        self.canvas = tk.Canvas(self, width=200, height=200)
+        self.canvas = CTkCanvas(self, width=200, height=200)
         self.canvas.pack(pady=10, padx=10)
 
         # Button to navigate to Home page
-        home_button = tk.Button(self, text="Go to Home", command=self.go_to_home)
-        home_button.pack()
+        self.home_button = CTkButton(self, text="Go to Home", command=show_page1_callback)
+        self.home_button.pack()
 
         # Button to start capturing video
-        start_button = tk.Button(self, text="Start Camera", command=self.start_camera)
+        start_button = CTkButton(self, text="Start Camera", command=self.start_camera)
         start_button.pack()
 
         # Capture video flag
@@ -25,6 +26,7 @@ class ColorGrabPage(tk.Frame):
     def start_camera(self):
         # Start capturing video
         self.capture_video_flag = True
+        self.initialize_camera()
         self.capture_video()
 
     def capture_video(self):
@@ -55,6 +57,7 @@ class ColorGrabPage(tk.Frame):
         # Stop capturing video and go to the Home page
         from home_page import HomePage
         self.capture_video_flag = False
+        self.release_camera()
         self.controller.show_frame(HomePage)
 
     def initialize_camera(self):
@@ -65,3 +68,11 @@ class ColorGrabPage(tk.Frame):
         # Release the camera
         if hasattr(self, 'cap'):
             self.cap.release()
+
+    def setup(self):
+        # Call setup when the page is shown
+        self.start_camera()
+
+    def cleanup(self):
+        # Call cleanup when leaving the page
+        self.release_camera()
