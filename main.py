@@ -1,19 +1,18 @@
-# main.py
 import customtkinter as tk
 from tkinter import Tk
 
 from home_page import HomePage
-from color_gear_page import ColorGearPage
-from color_converter_page import ColorConverterPage
 from color_grab_page import ColorGrabPage
 
 class SampleApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Page Switching Example")
+        self.root.geometry("600x400")
         
-        self.page1 = HomePage(self.root, self.show_page1)
-        self.page2 = ColorGrabPage(self.root, self.show_page2)
+        # Create instances of the pages
+        self.page1 = HomePage(self.root, self.show_page2)  
+        self.page2 = ColorGrabPage(self.root, self.show_page1)  # Pass show_page1 as the callback function
         self.show_page1()
 
     def show_page1(self):

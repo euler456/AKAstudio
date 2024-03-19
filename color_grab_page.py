@@ -1,12 +1,11 @@
 import customtkinter as tk
 from customtkinter import CTkFrame, CTkCanvas ,CTkLabel, CTkButton
-
 import cv2
 from PIL import Image, ImageTk
 
 class ColorGrabPage(CTkFrame):
     def __init__(self, parent, show_page1_callback):
-        super().__init__(parent)
+        super().__init__(parent ,width=800, height=600)
 
         # Create a canvas to display the video feed
         self.canvas = CTkCanvas(self, width=200, height=200)
