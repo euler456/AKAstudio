@@ -1,10 +1,10 @@
 import tkinter as tk
+from customtkinter import CTkFrame, CTkCanvas ,CTkLabel, CTkButton
 
-class ColorConverterPage(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-        
+class ColorConverterPage(CTkFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
         # Label for the page title
         label = tk.Label(self, text="Color Converter Page")
         label.pack(pady=10, padx=10)
@@ -22,7 +22,7 @@ class ColorConverterPage(tk.Frame):
         
         # Button to navigate to Home page
         from home_page import HomePage
-        home_button = tk.Button(self, text="Go to Home", command=lambda: controller.show_frame(HomePage))
+        home_button = tk.Button(self, text="Go to Home", command=self.parent.open_home_page)
         home_button.pack()
         
         # Update input fields based on the selected color type

@@ -1,18 +1,19 @@
-import customtkinter as tk
+import customtkinter as ctk
 from customtkinter import CTkFrame, CTkCanvas ,CTkLabel, CTkButton
 import cv2
 from PIL import Image, ImageTk
 
 class ColorGrabPage(CTkFrame):
-    def __init__(self, parent, show_page1_callback):
-        super().__init__(parent ,width=800, height=600)
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.parent = parent
 
         # Create a canvas to display the video feed
         self.canvas = CTkCanvas(self, width=200, height=200)
         self.canvas.pack(pady=10, padx=10)
 
         # Button to navigate to Home page
-        self.home_button = CTkButton(self, text="Go to Home", command=show_page1_callback)
+        self.home_button = CTkButton(self, text="Go to Home", command=self.parent.open_home_page)
         self.home_button.pack()
 
         # Button to start capturing video
