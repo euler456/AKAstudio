@@ -14,7 +14,7 @@ class MainApp(customtkinter.CTk):
         super().__init__()
 
         self.title("NCM App")
-        self.geometry("600x400")
+        self.geometry("800x600")
 
         self.home_page = HomePage(self)
         self.home_page.pack(expand=True, fill="both")

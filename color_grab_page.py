@@ -1,6 +1,6 @@
-import customtkinter as ctk
-from customtkinter import CTkFrame, CTkCanvas ,CTkLabel, CTkButton
+from customtkinter import CTkFrame, CTkCanvas, CTkLabel, CTkButton
 import cv2
+import tkinter
 from PIL import Image, ImageTk
 
 class ColorGrabPage(CTkFrame):
@@ -9,25 +9,45 @@ class ColorGrabPage(CTkFrame):
         self.parent = parent
 
         # Create a canvas to display the video feed
-        self.canvas = CTkCanvas(self, width=200, height=200)
+        self.canvas = CTkCanvas(self, width=400, height=400)
         self.canvas.pack(pady=10, padx=10)
 
         # Button to navigate to Home page
         self.home_button = CTkButton(self, text="Go to Home", command=self.parent.open_home_page)
-        self.home_button.pack()
+        self.home_button.place(relx = 0.5, rely=0.8, anchor=tkinter.CENTER)
 
         # Button to start capturing video
-        start_button = CTkButton(self, text="Start Camera", command=self.start_camera)
-        start_button.pack()
+        self.start_button = CTkButton(self, text="Start Camera", command=self.start_camera)
+        self.start_button.pack()
+
+        # Button to stop capturing video
+        self.stop_button = CTkButton(self, text="Stop Camera", command=self.stop_camera)
+        self.stop_button.pack()
+
+        # Button to close the camera
+        self.close_button = CTkButton(self, text="Close App", command=self.close_app)
+        self.close_button.pack()
 
         # Capture video flag
         self.capture_video_flag = False
 
     def start_camera(self):
-        # Start capturing video
-        self.capture_video_flag = True
-        self.initialize_camera()
-        self.capture_video()
+        if not self.capture_video_flag:
+            # Start capturing video
+            self.capture_video_flag = True
+            self.initialize_camera()
+            self.capture_video()
+
+    def stop_camera(self):
+        if self.capture_video_flag:
+            # Stop capturing video
+            self.capture_video_flag = False
+            self.release_camera()
+
+    def close_app(self):
+        # Close the camera
+        self.stop_camera()
+        self.parent.destroy()
 
     def capture_video(self):
         if self.capture_video_flag:
@@ -38,7 +58,7 @@ class ColorGrabPage(CTkFrame):
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
                 # Resize the frame to fit the canvas
-                frame_resized = cv2.resize(frame_rgb, (200, 200))
+                frame_resized = cv2.resize(frame_rgb, (400, 400))
 
                 # Convert the frame to a format suitable for displaying in a Tkinter Canvas
                 img = Image.fromarray(frame_resized)
@@ -53,13 +73,6 @@ class ColorGrabPage(CTkFrame):
                 # Schedule the next frame capture
                 self.after(10, self.capture_video)
 
-    def go_to_home(self):
-        # Stop capturing video and go to the Home page
-        from home_page import HomePage
-        self.capture_video_flag = False
-        self.release_camera()
-        self.controller.show_frame(HomePage)
-
     def initialize_camera(self):
         # Initialize camera
         self.cap = cv2.VideoCapture(0)
@@ -68,10 +81,6 @@ class ColorGrabPage(CTkFrame):
         # Release the camera
         if hasattr(self, 'cap'):
             self.cap.release()
-
-    def setup(self):
-        # Call setup when the page is shown
-        self.start_camera()
 
     def cleanup(self):
         # Call cleanup when leaving the page
