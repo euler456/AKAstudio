@@ -3,6 +3,7 @@ from customtkinter import CTkFrame, CTkCanvas, CTkLabel, CTkButton
 import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
+import colorsys
 
 class ColorGrabPage(CTkFrame):
     def __init__(self, parent):
@@ -13,9 +14,24 @@ class ColorGrabPage(CTkFrame):
         self.canvas = CTkCanvas(self, width=640, height=470)
         self.canvas.pack(pady=10, padx=10)
 
-        # Create a label to display color information
+        # Create labels to display color information
         self.color_label = CTkLabel(self, text="Click on the canvas to grab color")
         self.color_label.pack()
+
+        self.rgb_label = CTkLabel(self, text="RGB: ")
+        self.rgb_label.pack()
+
+        self.hex_label = CTkLabel(self, text="HEX: ")
+        self.hex_label.pack()
+
+        self.cmyk_label = CTkLabel(self, text="CMYK: ")
+        self.cmyk_label.pack()
+
+        self.hsl_label = CTkLabel(self, text="HSL: ")
+        self.hsl_label.pack()
+
+        self.hsv_label = CTkLabel(self, text="HSV: ")
+        self.hsv_label.pack()
 
         # Bind mouse click event to canvas
         self.canvas.bind("<Button-1>", self.get_color)
@@ -42,6 +58,73 @@ class ColorGrabPage(CTkFrame):
         if color is not None:
             # Update the color label with the color information
             self.color_label.configure(text=f"The color at ({x}, {y}) is {color}")
+            
+            # Calculate and display other color representations
+            rgb = color
+            hex_color = "#{:02x}{:02x}{:02x}".format(*rgb)
+            cmyk = self.rgb_to_cmyk(rgb)
+            hsl = self.rgb_to_hsl(rgb)
+            hsv = self.rgb_to_hsv(rgb)
+            
+            self.rgb_label.configure(text=f"RGB: {rgb}")
+            self.hex_label.configure(text=f"HEX: {hex_color}")
+            self.cmyk_label.configure(text=f"CMYK: {cmyk}")
+            self.hsl_label.configure(text=f"HSL: {hsl}")
+            self.hsv_label.configure(text=f"HSV: {hsv}")
+
+    def rgb_to_hsl(self, rgb):
+        r, g, b = [x / 255.0 for x in rgb]
+        max_color = max(r, g, b)
+        min_color = min(r, g, b)
+        delta = max_color - min_color
+
+        # Calculate hue
+        if delta == 0:
+            h = 0
+        elif max_color == r:
+            h = 60 * (((g - b) / delta) % 6)
+        elif max_color == g:
+            h = 60 * (((b - r) / delta) + 2)
+        else:
+            h = 60 * (((r - g) / delta) + 4)
+
+        # Calculate lightness
+        l = (max_color + min_color) / 2
+
+        # Calculate saturation
+        if delta == 0:
+            s = 0
+        else:
+            s = delta / (1 - abs(2 * l - 1))
+
+        return round(h), round(s * 100), round(l * 100)
+
+    def rgb_to_hsv(self, rgb):
+        r, g, b = [x / 255.0 for x in rgb]
+        max_color = max(r, g, b)
+        min_color = min(r, g, b)
+        delta = max_color - min_color
+
+        # Calculate hue
+        if delta == 0:
+            h = 0
+        elif max_color == r:
+            h = 60 * (((g - b) / delta) % 6)
+        elif max_color == g:
+            h = 60 * (((b - r) / delta) + 2)
+        else:
+            h = 60 * (((r - g) / delta) + 4)
+
+        # Calculate saturation
+        if max_color == 0:
+            s = 0
+        else:
+            s = delta / max_color
+
+        # Calculate value
+        v = max_color
+
+        return round(h), round(s * 100), round(v * 100)
 
     def get_pixel_color(self, x, y):
         if hasattr(self, 'cap'):
@@ -107,3 +190,16 @@ class ColorGrabPage(CTkFrame):
     def cleanup(self):
         # Call cleanup when leaving the page
         self.release_camera()
+    
+    def rgb_to_cmyk(self, rgb):
+        r, g, b = rgb
+        c = 1 - (r / 255)
+        m = 1 - (g / 255)
+        y = 1 - (b / 255)
+        k = min(c, m, y)
+        if k == 1:
+            return 0, 0, 0, 1
+        c = (c - k) / (1 - k)
+        m = (m - k) / (1 - k)
+        y = (y - k) / (1 - k)
+        return round(c, 2), round(m, 2), round(y, 2), round
