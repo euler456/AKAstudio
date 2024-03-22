@@ -14,39 +14,47 @@ class ColorGrabPage(CTkFrame):
         self.canvas = CTkCanvas(self, width=640, height=470)
         self.canvas.pack(pady=10, padx=10)
 
+        # Create a frame to hold color information
+        color_info_frame = CTkFrame(self)
+        color_info_frame.pack(pady=10)
+
         # Create labels to display color information
-        self.color_label = CTkLabel(self, text="Click on the canvas to grab color")
+        self.color_label = CTkLabel(color_info_frame, text="Click on the canvas to grab color", font=("Helvetica", 14, "bold"))
         self.color_label.pack()
 
-        self.rgb_label = CTkLabel(self, text="RGB: ")
+        self.rgb_label = CTkLabel(color_info_frame, text="RGB: ", font=("Helvetica", 12))
         self.rgb_label.pack()
 
-        self.hex_label = CTkLabel(self, text="HEX: ")
+        self.hex_label = CTkLabel(color_info_frame, text="HEX: ", font=("Helvetica", 12))
         self.hex_label.pack()
 
-        self.cmyk_label = CTkLabel(self, text="CMYK: ")
+        self.cmyk_label = CTkLabel(color_info_frame, text="CMYK: ", font=("Helvetica", 12))
         self.cmyk_label.pack()
 
-        self.hsl_label = CTkLabel(self, text="HSL: ")
+        self.hsl_label = CTkLabel(color_info_frame, text="HSL: ", font=("Helvetica", 12))
         self.hsl_label.pack()
 
-        self.hsv_label = CTkLabel(self, text="HSV: ")
+        self.hsv_label = CTkLabel(color_info_frame, text="HSV: ", font=("Helvetica", 12))
         self.hsv_label.pack()
 
         # Bind mouse click event to canvas
         self.canvas.bind("<Button-1>", self.get_color)
 
+        # Create a frame to hold control buttons
+        control_frame = CTkFrame(self)
+        control_frame.pack(pady=10)
+
         # Button to navigate to Home page
-        self.home_button = CTkButton(self, text="Go to Home", command=self.parent.open_home_page)
-        self.home_button.pack()
+        self.home_button = CTkButton(control_frame, text="Go to Home", command=self.parent.open_home_page, font=("Helvetica", 12))
+        self.home_button.pack(side="left", padx=10)
 
         # Button to start capturing video
-        self.start_button = CTkButton(self, text="Start Camera", command=self.start_camera)
-        self.start_button.pack()
+        self.start_button = CTkButton(control_frame, text="Start Camera", command=self.start_camera, font=("Helvetica", 12))
+        self.start_button.pack(side="left", padx=10)
 
         # Button to stop capturing video
-        self.stop_button = CTkButton(self, text="Stop Camera", command=self.stop_camera)
-        self.stop_button.pack()
+        self.stop_button = CTkButton(control_frame, text="Stop Camera", command=self.stop_camera, font=("Helvetica", 12))
+        self.stop_button.pack(side="left", padx=10)
 
         # Capture video flag
         self.capture_video_flag = False
@@ -57,7 +65,7 @@ class ColorGrabPage(CTkFrame):
         color = self.get_pixel_color(x, y)
         if color is not None:
             # Update the color label with the color information
-            self.color_label.configure(text=f"The color at ({x}, {y}) is {color}")
+            self.color_label.configure(text=f"The color at ({x}, {y}) is ")
             
             # Calculate and display other color representations
             rgb = color
@@ -202,4 +210,4 @@ class ColorGrabPage(CTkFrame):
         c = (c - k) / (1 - k)
         m = (m - k) / (1 - k)
         y = (y - k) / (1 - k)
-        return round(c, 2), round(m, 2), round(y, 2), round
+        return round(c, 2), round(m, 2), round(y, 2), round(k, 2)
