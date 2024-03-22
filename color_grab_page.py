@@ -10,8 +10,15 @@ class ColorGrabPage(CTkFrame):
         self.parent = parent
 
         # Create a canvas to display the video feed
-        self.canvas = CTkCanvas(self, width=400, height=400)
+        self.canvas = CTkCanvas(self, width=640, height=470)
         self.canvas.pack(pady=10, padx=10)
+
+        # Create a label to display color information
+        self.color_label = CTkLabel(self, text="Click on the canvas to grab color")
+        self.color_label.pack()
+
+        # Bind mouse click event to canvas
+        self.canvas.bind("<Button-1>", self.get_color)
 
         # Button to navigate to Home page
         self.home_button = CTkButton(self, text="Go to Home", command=self.parent.open_home_page)
@@ -25,12 +32,31 @@ class ColorGrabPage(CTkFrame):
         self.stop_button = CTkButton(self, text="Stop Camera", command=self.stop_camera)
         self.stop_button.pack()
 
-        # Button to close the camera
-        self.close_button = CTkButton(self, text="Close App", command=self.close_app)
-        self.close_button.pack()
-
         # Capture video flag
         self.capture_video_flag = False
+
+    def get_color(self, event):
+        x, y = event.x, event.y
+        # Get the color at the clicked point
+        color = self.get_pixel_color(x, y)
+        if color is not None:
+            # Update the color label with the color information
+            self.color_label.configure(text=f"The color at ({x}, {y}) is {color}")
+
+    def get_pixel_color(self, x, y):
+        if hasattr(self, 'cap'):
+            ret, frame = self.cap.read()
+            if ret:
+                # Convert frame to RGB
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                # Get dimensions of the frame
+                frame_height, frame_width, _ = frame_rgb.shape
+                # Check if coordinates are within bounds
+                if 0 <= x < frame_width and 0 <= y < frame_height:
+                    # Get color of the pixel at (x, y)
+                    color = frame_rgb[y, x]
+                    return color
+        return None
 
     def start_camera(self):
         if not self.capture_video_flag:
@@ -45,11 +71,6 @@ class ColorGrabPage(CTkFrame):
             self.capture_video_flag = False
             self.release_camera()
 
-    def close_app(self):
-        # Close the camera
-        self.stop_camera()
-        self.parent.destroy()
-
     def capture_video(self):
         if self.capture_video_flag:
             # Read and display video frames until the user closes the window
@@ -59,7 +80,7 @@ class ColorGrabPage(CTkFrame):
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
                 # Resize the frame to fit the canvas
-                frame_resized = cv2.resize(frame_rgb, (400, 400))
+                frame_resized = cv2.resize(frame_rgb, (640, 470))
 
                 # Convert the frame to a format suitable for displaying in a Tkinter Canvas
                 img = Image.fromarray(frame_resized)
