@@ -3,13 +3,14 @@ from customtkinter import CTkFrame, CTkCanvas, CTkLabel, CTkButton
 import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
-import colorsys
+
 
 class ColorGrabPage(CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-
+        ctk.set_appearance_mode("system")
+        ctk.set_appearance_mode("dark")
         # Create a canvas to display the video feed
         self.canvas = CTkCanvas(self, width=640, height=470)
         self.canvas.pack(pady=10, padx=10)
