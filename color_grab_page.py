@@ -89,10 +89,24 @@ class ColorGrabPage(CTkFrame):
             self.hsl_label.bind("<Button-1>", lambda event: self.copy_to_clipboard(hsl))
             self.hsv_label.bind("<Button-1>", lambda event: self.copy_to_clipboard(hsv))
 
+    def fade_out_label(self, label, duration):
+        # Wait for the specified duration before destroying the label
+        self.after(int(duration * 1000), lambda: label.destroy())
+
     def copy_to_clipboard(self, value):
         self.parent.clipboard_clear()
         self.parent.clipboard_append(value)
-        CTkInputDialog.showinfo("Copied", f"Value '{value}' copied to clipboard.")
+        message = f"Value '{value}' copied to clipboard."
+        
+        # Create a label to display the message
+        label = CTkLabel(self.parent, text=message)
+        label.pack()
+
+        # Start the fade-out effect after 2 seconds
+        self.fade_out_label(label, 2)
+
+        # Start the fade-out effect after 2 seconds
+        self.fade_out_label(label, 2)
 
     def rgb_to_hsl(self, rgb):
         r, g, b = [x / 255.0 for x in rgb]
