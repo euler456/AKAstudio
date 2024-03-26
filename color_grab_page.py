@@ -1,8 +1,9 @@
 import customtkinter as ctk
-from customtkinter import CTkFrame, CTkCanvas, CTkLabel, CTkButton
+from customtkinter import CTkFrame, CTkCanvas, CTkLabel, CTkButton ,CTkInputDialog
 import cv2
 from PIL import Image, ImageTk
 import tkinter as tk
+from tkinter import messagebox
 
 
 class ColorGrabPage(CTkFrame):
@@ -67,19 +68,31 @@ class ColorGrabPage(CTkFrame):
         if color is not None:
             # Update the color label with the color information
             self.color_label.configure(text=f"The color at ({x}, {y}) is ")
-            
+
             # Calculate and display other color representations
             rgb = color
             hex_color = "#{:02x}{:02x}{:02x}".format(*rgb)
             cmyk = self.rgb_to_cmyk(rgb)
             hsl = self.rgb_to_hsl(rgb)
             hsv = self.rgb_to_hsv(rgb)
-            
+
             self.rgb_label.configure(text=f"RGB: {rgb}")
             self.hex_label.configure(text=f"HEX: {hex_color}")
             self.cmyk_label.configure(text=f"CMYK: {cmyk}")
             self.hsl_label.configure(text=f"HSL: {hsl}")
             self.hsv_label.configure(text=f"HSV: {hsv}")
+
+            # Add copy functionality to each label
+            self.rgb_label.bind("<Button-1>", lambda event: self.copy_to_clipboard(rgb))
+            self.hex_label.bind("<Button-1>", lambda event: self.copy_to_clipboard(hex_color))
+            self.cmyk_label.bind("<Button-1>", lambda event: self.copy_to_clipboard(cmyk))
+            self.hsl_label.bind("<Button-1>", lambda event: self.copy_to_clipboard(hsl))
+            self.hsv_label.bind("<Button-1>", lambda event: self.copy_to_clipboard(hsv))
+
+    def copy_to_clipboard(self, value):
+        self.parent.clipboard_clear()
+        self.parent.clipboard_append(value)
+        CTkInputDialog.showinfo("Copied", f"Value '{value}' copied to clipboard.")
 
     def rgb_to_hsl(self, rgb):
         r, g, b = [x / 255.0 for x in rgb]
