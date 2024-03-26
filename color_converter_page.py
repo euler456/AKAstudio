@@ -1,5 +1,6 @@
 import tkinter as tk
 import customtkinter
+from PIL import Image, ImageTk
 from color_conversion_functions import rgb_to_hex, hex_to_rgb, rgb_to_cmyk, cmyk_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_hsv, hsv_to_rgb
 
 class ColorConverterPage(customtkinter.CTkFrame):
@@ -34,7 +35,7 @@ class ColorConverterPage(customtkinter.CTkFrame):
         
         # Button to trigger conversion
         self.convert_button = customtkinter.CTkButton(self, text="Convert", command=self.convert_values)
-        self.convert_button.place(relx=0.5, rely=0.9, anchor=tk.CENTER)
+        self.convert_button.place(relx=0.5, rely=0.3, anchor=tk.CENTER)
         
         # Update input fields based on the selected color type
         self.update_inputs()
@@ -166,7 +167,15 @@ class ColorConverterPage(customtkinter.CTkFrame):
         
         if self.output_container is not None: self.output_container.destroy()
         self.output_container = customtkinter.CTkFrame(master=self, width=300, height=300)
-        self.output_container.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        self.output_container.place(relx=0.5, rely=0.55, anchor=tk.CENTER)
+
+        # Display color representation
+        color_image = Image.new("RGB", (100, 40), self.hex_value)
+        color_photo = ImageTk.PhotoImage(color_image)
+        canvas = tk.Canvas(self.output_container, width=100, height=40, bg=self.hex_value, highlightthickness=0)
+        canvas.create_image(100, 40, image=color_photo)
+        canvas.image = color_photo  # Keep reference to avoid garbage collection
+        canvas.pack(padx=10, pady=10)
 
         # Iterate over color types and display converted values
         for color_type in self.color_types:
